@@ -1,0 +1,187 @@
+from random import shuffle
+class Card():
+    def __init__(self,rank,suit):
+        self.rank=rank
+        self.suit=suit
+    def __str__(self):
+        return f'{self.rank} of {self.suit}'
+    
+class Chips():
+    bet=0
+    def __init__(self,chips):
+        self.chips=chips
+    def askbet(self):
+        while True:
+            x=int(input('enter bet \n'))
+            if x>self.chips:
+                print(f'you have chips worth of {self.chips}\n')
+                continue
+            else:
+                Chips.bet=x
+                break
+    def adjustbet(self):
+        if playertot==21 or dealertot>21 or (playertot>dealertot and playertot<=21):            
+            self.chips+=Chips.bet
+            print(f'chips:{self.chips}')
+        elif dealertot==21 or playertot>21 or (dealertot>playertot and dealertot<=21):
+            self.chips-=Chips.bet
+            print(f'chips:{self.chips}')
+        else:
+            print(f'chips:{self.chips}')
+        
+chip1=Chips(500)
+ranks=['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Joker','Queen','King']
+suits=['Heart','Spades','Club','Diamond']
+values={'Ace':1,'Two':2,'Three':3,'Four':4,'Five':5,'Six':6,'Seven':7,'Eight':8,'Nine':9,'Ten':10,'Joker':10,'Queen':10,'King':10}
+deck=[]
+player=[]
+dealer=[]
+play='y'
+        
+def ask_hit_or_stay():
+    global ask
+    ask=" "
+    while ask!='h' and ask!='s':
+        ask=input('enter hit or stay\n')        
+        
+def check_ace(a):
+    global ace
+    ace=False
+    for x in a:
+        if x.rank=='Ace':
+            ace=True
+        
+            
+
+def play_again():
+    global play
+    play=''
+    while play!='y' and play!='n':
+        play=input('do you wanna play again y or n ')
+        
+def display_dealer(a):
+    print('dealer cards')
+    print('------------')
+    for x in a:
+        print(x)
+    print('\n')
+        
+        
+def display_player(a):
+    print('player cards')
+    print('------------')
+    for x in a:
+        print(x)
+    print('\n')
+
+            
+while play=='y':
+    for x in ranks:
+        for y in suits:
+            deck.append(Card(x,y))
+
+    play=''
+    ask=''
+    win=False
+    ace=False
+    bust=False
+    chip1.askbet()
+    shuffle(deck)
+    player=[deck[49],deck[48]]
+    dealer=[deck[51],deck[50]]
+    print('dealer cards')
+    print('------------')
+    print('one card hidden')
+    print(f'{deck[50]}\n')
+    display_player(player)
+    playertot=values[deck[49].rank]+values[deck[48].rank]
+    dealertot=values[deck[51].rank]+values[deck[50].rank]
+    check_ace(player)
+    if ace==True:
+        for x in player:
+            if values[x.rank]==10:
+                win=True
+                print('player wins')
+                chip1.adjustbet()
+                play_again()
+        if play=='y':
+            continue
+        else:
+            break
+    ask_hit_or_stay()
+    while win==False and bust==False and ask!='s':
+        
+        player.append(deck[0])
+        display_dealer(dealer)
+        display_player(player)
+        playertot+=values[deck[0].rank]
+        if playertot>21:
+            bust=True
+            print('player busts. Dealer wins.')
+            chip1.adjustbet()
+            break
+        elif playertot==21:
+            win=True
+            print('player wins')
+            chip1.adjustbet()
+            break
+        check_ace(player)
+        if ace==True and playertot+10==21:
+            win=True
+            print('player wins')
+            chip1.adjustbet()
+            break
+        deck.pop(0)
+        ask_hit_or_stay()
+    if win==True or bust==True:
+        play_again()
+        if play=='y':
+            continue
+        else:
+            break
+        
+    check_ace(player)
+    if ace==True and playertot+10<=21:
+        playertot+=10
+    display_dealer(dealer)
+    display_player(player)
+
+    while win==False and bust==False and dealertot<17:
+        dealer.append(deck[0])
+        display_dealer(dealer)
+        display_player(player)
+        dealertot+=values[deck[0].rank]
+        if dealertot>21:
+            bust=True
+            print('dealer busts. player wins')
+            chip1.adjustbet()
+            break
+        check_ace(dealer)
+        if ace==True and dealertot+10>playertot and dealertot+10<=21:
+            dealertot+=10
+
+        if ace==True and dealertot+10==21:
+            win=True
+            print('dealer wins')
+            chip1.adjustbet()
+            break
+    if win==True or bust==True:
+        play_again()
+        if play=='y':
+            continue
+        else:
+            break
+    check_ace(dealer)
+    if ace==True and dealertot+10<=21:
+        dealertot+=10
+    if playertot>dealertot:
+        print('player wins')
+        chip1.adjustbet()
+    elif dealertot>playertot:
+        print('dealer wins')
+        chip1.adjustbet()
+    else:
+        print('Draw')
+        chip1.adjustbet()
+    play_again()
+    
